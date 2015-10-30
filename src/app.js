@@ -6,16 +6,17 @@
   self.brant.init();
 
   function brant() {
+    var textTagElement;
+    var timerInterval;
     var timer = {
-      start: function() {
-        var element = document.getElementById("root");
+      start: function(element) {
         var blurLevel = 0;
-        element.style.color = 'blue';
         var timer = setInterval(function(){
           blurLevel++;
           blurText(element, blurLevel);
           addNewText(element);
         }, 3000);
+
         element.style.color = 'blue';
 
         function blurText(el, blur) {
@@ -26,16 +27,27 @@
           var node = document.createTextNode("Can you read this? ");
           el.appendChild(node);
         }
+        return timer;
+      },
+      stop: function(intervalToStop) {
+        clearInterval(intervalToStop);
       }
-    }
+    };
 
     return {
       init: init,
-      timer: timer
+      timer: timer,
+      timerInterval: timerInterval,
+      textTagElement: textTagElement
     }
 
     function init() {
-      this.timer.start();
+      var self = this;
+      var element = self.textTagElement = document.getElementById("root");
+      self.timerInterval = self.timer.start(element);
+      element.onclick = function(event) {
+        self.timer.stop(self.timerInterval);
+      };
     }
 
   };
